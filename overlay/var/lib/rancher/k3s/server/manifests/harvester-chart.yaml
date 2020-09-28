@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: harvester-system
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: harvester
+  namespace: kube-system
+spec:
+  chart: https://%{KUBERNETES_API}%/static/harvester-0.1.0.tgz
+  targetNamespace: harvester-system
