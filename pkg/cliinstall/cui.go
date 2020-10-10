@@ -23,7 +23,7 @@ var (
 	cfg = config.CloudConfig{}
 )
 
-func runCuiInstall() {
+func RunCuiInstall() {
 	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
 		log.Panicln(err)
