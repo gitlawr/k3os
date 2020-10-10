@@ -23,9 +23,7 @@ func Command() cli.Command {
 			return nil
 		},
 		Action: func(*cli.Context) {
-			if err := cliinstall.RunCuiInstall(); err != nil {
-				logrus.Error(err)
-			}
+			cliinstall.RunCuiInstall()
 		},
 		Hidden: mode == "local",
 	}
