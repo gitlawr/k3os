@@ -6,7 +6,7 @@ require (
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/ghodss/yaml v1.0.0
-	github.com/jroimartin/gocui v0.4.0 // indirect
+	github.com/jroimartin/gocui v0.4.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/mattn/go-isatty v0.0.10
 	github.com/mattn/go-runewidth v0.0.9 // indirect

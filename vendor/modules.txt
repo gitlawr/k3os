@@ -7,12 +7,18 @@ github.com/docker/docker/pkg/reexec
 github.com/docker/go-units
 # github.com/ghodss/yaml v1.0.0
 github.com/ghodss/yaml
+# github.com/jroimartin/gocui v0.4.0
+github.com/jroimartin/gocui
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/mattn/go-isatty v0.0.10
 github.com/mattn/go-isatty
+# github.com/mattn/go-runewidth v0.0.9
+github.com/mattn/go-runewidth
 # github.com/mattn/go-shellwords v1.0.5
 github.com/mattn/go-shellwords
+# github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1
+github.com/nsf/termbox-go
 # github.com/otiai10/copy v1.0.2
 github.com/otiai10/copy
 # github.com/paultag/go-modprobe v0.0.0-20180523225901-7ccf6a1b5271
