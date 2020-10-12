@@ -198,7 +198,7 @@ func confirmInstall(g *gocui.Gui, v *gocui.View) error {
 		cfg = config.CloudConfig{
 			K3OS: config.K3OS{
 				Install: &config.Install{
-					Device: "/dev/vdb",
+					Device: "/dev/vda",
 				},
 			},
 		}
@@ -290,6 +290,13 @@ func doInstall(g *gocui.Gui) error {
 				return err
 			}
 			fmt.Fprintln(v, m)
+
+			lines := len(v.BufferLines())
+			_, sy := v.Size()
+			if lines > sy {
+				ox, oy := v.Origin()
+				v.SetOrigin(ox, oy+1)
+			}
 			return nil
 		})
 	}
@@ -303,6 +310,13 @@ func doInstall(g *gocui.Gui) error {
 				return err
 			}
 			fmt.Fprintln(v, m)
+
+			lines := len(v.BufferLines())
+			_, sy := v.Size()
+			if lines > sy {
+				ox, oy := v.Origin()
+				v.SetOrigin(ox, oy+1)
+			}
 			return nil
 		})
 	}
