@@ -20,7 +20,8 @@ const (
 )
 
 var (
-	cfg = config.CloudConfig{}
+	cfg   = config.CloudConfig{}
+	index = 0
 )
 
 func RunCuiInstall() {
@@ -48,7 +49,7 @@ func layout(g *gocui.Gui) error {
 		return err
 	}
 	sy := len(disks) + 1
-	if v, err := g.SetView(diskView, maxX/2-20, maxY/2-sy, maxX/2+20, maxY/2+sy); err != nil {
+	if v, err := g.SetView(diskView, maxX/2-40, maxY/2-sy, maxX/2+40, maxY/2+sy); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -64,7 +65,7 @@ func layout(g *gocui.Gui) error {
 	if _, err := g.SetCurrentView(diskView); err != nil {
 		return err
 	}
-	if v, err := g.SetView(noteView, maxX/2-20, maxY/2+sy, maxX/2+20, maxY/2+sy+2); err != nil {
+	if v, err := g.SetView(noteView, maxX/2-40, maxY/2+sy, maxX/2+40, maxY/2+sy+2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -72,13 +73,13 @@ func layout(g *gocui.Gui) error {
 		fmt.Fprint(v, "Note: Device will be formatted.")
 	}
 
-	if v, err := g.SetView(debugView, 0, 0, 10, maxY); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		v.Frame = false
-		fmt.Fprintln(v, "debug:")
-	}
+	// if v, err := g.SetView(debugView, 0, 0, 30, maxY); err != nil {
+	// 	if err != gocui.ErrUnknownView {
+	// 		return err
+	// 	}
+	// 	v.Frame = false
+	// 	fmt.Fprintln(v, "debug:")
+	// }
 	return nil
 }
 
@@ -109,10 +110,7 @@ func setKeyBindings(g *gocui.Gui) error {
 	if err := g.SetKeybinding(diskView, gocui.MouseLeft, gocui.ModNone, arrowUp); err != nil {
 		return err
 	}
-	if err := g.SetKeybinding(diskView, gocui.KeyEnter, gocui.ModNone, confirmInstall); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding(confirmView, gocui.KeyEnter, gocui.ModNone, doInstall); err != nil {
+	if err := g.SetKeybinding("", gocui.KeyEnter, gocui.ModNone, nextDialog); err != nil {
 		return err
 	}
 	return nil
@@ -173,14 +171,28 @@ func getDisks() ([]string, error) {
 	return strings.Split(string(output), "\n"), nil
 }
 
+func nextDialog(g *gocui.Gui, v *gocui.View) error {
+	debug(g, "next dialog,"+v.Name())
+	index++
+	switch index {
+	case 1:
+		return confirmInstall(g, v)
+	case 2:
+		return doInstall(g, v)
+	}
+	return nil
+}
 func confirmInstall(g *gocui.Gui, v *gocui.View) error {
 	debug(g, "enter confirmInstall")
 	maxX, maxY := g.Size()
-	if v, err := g.SetView(confirmView, maxX/2-20, maxY/2-10, maxX/2+20, maxY/2+10); err != nil {
+	if v, err := g.SetView(confirmView, maxX/2-40, maxY/2-10, maxX/2+40, maxY/2+10); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Title = "Confirm Installation"
+		v.Title = "Confirm Configuration"
+		v.Highlight = true
+		v.SelBgColor = gocui.ColorGreen
+		v.SelFgColor = gocui.ColorBlack
 
 		cfg = config.CloudConfig{
 			K3OS: config.K3OS{
@@ -195,54 +207,89 @@ func confirmInstall(g *gocui.Gui, v *gocui.View) error {
 		}
 
 		if !cfg.K3OS.Install.Silent {
-			fmt.Fprintln(v, "\nConfiguration\n"+"-------------\n\n"+
-				string(installBytes)+
-				"\nYour disk will be formatted and k3OS will be installed with the above configuration.\nContinue?")
+			fmt.Fprintln(v, string(installBytes)+
+				"\nYour disk will be formatted and k3OS will be installed with \nthe above configuration. Continue?\n")
+
+			fmt.Fprintln(v, "Yes")
+			fmt.Fprintln(v, "No")
+			cx, cy := v.Cursor()
+			debug(g, fmt.Sprint(cx)+" "+fmt.Sprint(cy))
+			if err := v.SetCursor(cx, cy+5); err != nil {
+				debug(g, err.Error())
+			}
 		}
 	}
+	g.Update(func(g *gocui.Gui) error {
+		v, err := g.View(diskView)
+		if err != nil {
+			debug(g, err.Error())
+		}
+		v.Clear()
+		return nil
+	})
 	if _, err := g.SetCurrentView(confirmView); err != nil {
 		return err
 	}
-	if err := g.DeleteView(diskView); err != nil {
-		return err
-	}
-	debug(g, "currentView is confirmView")
+	debug(g, "currentView is "+g.CurrentView().Name())
 	return nil
 }
 
 func doInstall(g *gocui.Gui, v *gocui.View) error {
 	debug(g, "enter doInstall")
 	maxX, maxY := g.Size()
-	if v, err := g.SetView(installView, maxX/2-20, maxY/2-10, maxX/2+20, maxY/2+10); err != nil {
+	if v, err := g.SetView(installView, maxX/2-40, maxY/2-10, maxX/2+40, maxY/2+10); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
 		v.Title = "Start Installation"
-		fmt.Fprintln(v, "Start installation")
 	}
 	if _, err := g.SetCurrentView(installView); err != nil {
 		return err
 	}
-	if err := g.DeleteView(confirmView); err != nil {
-		return err
-	}
+	g.Update(
+		func(g *gocui.Gui) error {
+			v, err := g.View(confirmView)
+			if err != nil {
+				debug(g, err.Error())
+			}
+			v.Clear()
+			return nil
+		})
 	ev, err := config.ToEnv(cfg)
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command("/usr/libexec/k3os/install")
+
+	v, err = g.View(installView)
+	if err != nil {
+		return err
+	}
+	// cmd := exec.Command("/usr/libexec/k3os/install")
+	cmd := exec.Command("sh", "-c", "echo helloworld")
 	cmd.Env = append(os.Environ(), ev...)
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	cmd.Stdin = os.Stdin
+	cmd.Stderr = v
+	cmd.Stdout = v
+	cmd.Stdin = v
+
 	return cmd.Run()
 }
 
 func debug(g *gocui.Gui, log string) error {
-	debugV, err := g.View(debugView)
+	logfile := "/var/log/console.log"
+	f, err := os.OpenFile(logfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(debugV, log)
+
+	defer f.Close()
+
+	if _, err = f.WriteString(log); err != nil {
+		return err
+	}
+	// debugV, err := g.View(debugView)
+	// if err != nil {
+	// 	return err
+	// }
+	// fmt.Fprintln(debugV, log)
 	return nil
 }
