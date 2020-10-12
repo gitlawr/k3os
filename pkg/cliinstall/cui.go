@@ -169,7 +169,7 @@ func getDisks() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	return strings.Split(string(output), "\n"), nil
+	return strings.Split(strings.TrimSuffix(string(output), "\n"), "\n"), nil
 }
 
 func nextDialog(g *gocui.Gui, v *gocui.View) error {
@@ -198,7 +198,7 @@ func confirmInstall(g *gocui.Gui, v *gocui.View) error {
 		cfg = config.CloudConfig{
 			K3OS: config.K3OS{
 				Install: &config.Install{
-					Device: "/dev/sda",
+					Device: "/dev/vdb",
 				},
 			},
 		}
