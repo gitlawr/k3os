@@ -164,7 +164,7 @@ func isAtEnd(v *gocui.View) bool {
 }
 
 func getDisks() ([]string, error) {
-	output, err := exec.Command("/bin/sh", "-c", `lsblk -r -o NAME,SIZE,TYPE | grep -w disk | awk 'NR>1{printf "%s (%s)\n",$1,$2} {printf "%s (%s)",$1,$2}'`).CombinedOutput()
+	output, err := exec.Command("/bin/sh", "-c", `lsblk -r -o NAME,SIZE,TYPE | grep -w disk|cut -d ' ' -f 1,2`).CombinedOutput()
 	if err != nil {
 		return nil, err
 	}
@@ -264,8 +264,8 @@ func doInstall(g *gocui.Gui, v *gocui.View) error {
 	if err != nil {
 		return err
 	}
-	// cmd := exec.Command("/usr/libexec/k3os/install")
-	cmd := exec.Command("sh", "-c", "echo helloworld")
+	cmd := exec.Command("/usr/libexec/k3os/install")
+	// cmd := exec.Command("sh", "-c", "echo helloworld")
 	cmd.Env = append(os.Environ(), ev...)
 	cmd.Stderr = v
 	cmd.Stdout = v
