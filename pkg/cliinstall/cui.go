@@ -1,6 +1,7 @@
 package cliinstall
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
@@ -178,7 +179,7 @@ func nextDialog(g *gocui.Gui, v *gocui.View) error {
 	case 1:
 		return confirmInstall(g, v)
 	case 2:
-		return doInstall(g, v)
+		return installF(g, v)
 	}
 	return nil
 }
@@ -197,7 +198,7 @@ func confirmInstall(g *gocui.Gui, v *gocui.View) error {
 		cfg = config.CloudConfig{
 			K3OS: config.K3OS{
 				Install: &config.Install{
-					Device: "/dev/vdb",
+					Device: "/dev/sda",
 				},
 			},
 		}
@@ -234,8 +235,7 @@ func confirmInstall(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func doInstall(g *gocui.Gui, v *gocui.View) error {
-	debug(g, "enter doInstall")
+func installF(g *gocui.Gui, v *gocui.View) error {
 	maxX, maxY := g.Size()
 	if v, err := g.SetView(installView, maxX/2-40, maxY/2-10, maxX/2+40, maxY/2+10); err != nil {
 		if err != gocui.ErrUnknownView {
@@ -255,25 +255,59 @@ func doInstall(g *gocui.Gui, v *gocui.View) error {
 			v.Clear()
 			return nil
 		})
+	go doInstall(g)
+	return nil
+}
+
+func doInstall(g *gocui.Gui) error {
+	debug(g, "enter doInstall")
 	ev, err := config.ToEnv(cfg)
 	if err != nil {
 		return err
 	}
+	cmd := exec.Command("/usr/libexec/k3os/install")
+	// cmd := exec.Command("sh", "-c", "sleep 2;echo hello;sleep 2; echo world;sleep 2;echo good")
+	cmd.Env = append(os.Environ(), ev...)
 
-	v, err = g.View(installView)
+	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command("/usr/libexec/k3os/install")
-	// cmd := exec.Command("sh", "-c", "echo helloworld")
-	cmd.Env = append(os.Environ(), ev...)
-	cmd.Stderr = v
-	cmd.Stdout = v
-	cmd.Stdin = v
-
-	return cmd.Run()
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	scanner := bufio.NewScanner(stdout)
+	scanner.Split(bufio.ScanWords)
+	for scanner.Scan() {
+		m := scanner.Text()
+		g.Update(func(g *gocui.Gui) error {
+			v, err := g.View(installView)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintln(v, m)
+			return nil
+		})
+	}
+	scanner = bufio.NewScanner(stderr)
+	scanner.Split(bufio.ScanWords)
+	for scanner.Scan() {
+		m := scanner.Text()
+		g.Update(func(g *gocui.Gui) error {
+			v, err := g.View(installView)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintln(v, m)
+			return nil
+		})
+	}
+	return nil
 }
-
 func debug(g *gocui.Gui, log string) error {
 	logfile := "/var/log/console.log"
 	f, err := os.OpenFile(logfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
