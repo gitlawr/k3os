@@ -25,7 +25,8 @@ func Run() error {
 	}
 
 	if isInstall {
-		return runInstall(cfg)
+		RunCuiInstall()
+		return nil //runInstall(cfg)
 	}
 
 	bytes, err := config.ToBytes(cfg)

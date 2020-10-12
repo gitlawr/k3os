@@ -22,7 +22,9 @@ func Command() cli.Command {
 			return nil
 		},
 		Action: func(*cli.Context) {
-			cliinstall.RunCuiInstall()
+			if err := cliinstall.Run(); err != nil {
+				fmt.Println(err)
+			}
 		},
 		Hidden: mode == "local",
 	}

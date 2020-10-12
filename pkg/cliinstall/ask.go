@@ -19,7 +19,7 @@ func Ask(cfg *config.CloudConfig) (bool, error) {
 	if ok, err := isInstall(cfg); err != nil {
 		return false, err
 	} else if ok {
-		return true, AskInstall(cfg)
+		return true, nil //AskInstall(cfg)
 	}
 
 	return false, AskServerAgent(cfg)
