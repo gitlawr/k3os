@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+# airgap
+mkdir -p overlay/var/lib/rancher/k3s/agent/images
+wget -O overlay/var/lib/rancher/k3s/agent/images/k3s-airgap-images-amd64.tar https://github.com/rancher/k3s/releases/download/v1.19.2%2Bk3s1/k3s-airgap-images-amd64.tar
+
 source $(dirname $0)/version
 source $(dirname $0)/images
 

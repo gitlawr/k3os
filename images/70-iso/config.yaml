@@ -5,8 +5,10 @@ run_cmd:
 - "echo hello, run command"
 - "mkdir -p /var/lib/rancher/k3s/server/manifests"
 - "mkdir -p /var/lib/rancher/k3s/server/static"
+- "mkdir -p /var/lib/rancher/k3s/agent/images"
 - "cp /usr/var/lib/rancher/k3s/server/static/* /var/lib/rancher/k3s/server/static/"
 - "cp /usr/var/lib/rancher/k3s/server/manifests/* /var/lib/rancher/k3s/server/manifests/"
+- "cp /usr/var/lib/rancher/k3s/agent/images/* /var/lib/rancher/k3s/agent/images/"
 k3os:
   password: rancher
   dns_nameservers:
