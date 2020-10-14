@@ -5,8 +5,8 @@ run_cmd:
 - "echo hello, run command"
 - "mkdir -p /var/lib/rancher/k3s/server/manifests"
 - "mkdir -p /var/lib/rancher/k3s/server/static"
-- "cp /usr/var/lib/rancher/k3s/server/static/harvester-0.1.0.tgz /var/lib/rancher/k3s/server/static/harvester-0.1.0.tgz"
-- "cp /usr/var/lib/rancher/k3s/server/manifests/harvester-chart.yaml /var/lib/rancher/k3s/server/manifests/harvester-chart.yaml"
+- "cp /usr/var/lib/rancher/k3s/server/static/* /var/lib/rancher/k3s/server/static/"
+- "cp /usr/var/lib/rancher/k3s/server/manifests/* /var/lib/rancher/k3s/server/manifests/"
 k3os:
   password: rancher
   dns_nameservers:
