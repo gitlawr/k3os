@@ -7,6 +7,7 @@ import (
 	"os/exec"
 
 	"github.com/ghodss/yaml"
+	"github.com/gitlawr/console/pkg/console"
 	"github.com/rancher/k3os/pkg/config"
 	"github.com/rancher/k3os/pkg/questions"
 )
@@ -25,8 +26,7 @@ func Run() error {
 	}
 
 	if isInstall {
-		RunCuiInstall()
-		return nil //runInstall(cfg)
+		return console.RunConsole()
 	}
 
 	bytes, err := config.ToBytes(cfg)
