@@ -334,10 +334,11 @@ func addPassword2Panel(c *Console) error {
 			noteV.Close()
 			password1V.Close()
 			password2V.Close()
-			cfg.Config.K3OS.Password = password1
-			if err := updatePasswd(password1); err != nil {
+			encrpyted, err := getEncrptedPasswd(password1)
+			if err != nil {
 				return err
 			}
+			cfg.Config.K3OS.Password = encrpyted
 			titleV.SetContent("Specify cluster token")
 			return tokenV.Show()
 		},

@@ -28,7 +28,7 @@ func layoutDashboard(g *gocui.Gui) error {
 			return err
 		}
 		v.Frame = false
-		ip, err := exec.Command("/bin/sh", "-c", `hostname -I|cut -d " " -f 1`).CombinedOutput()
+		ip, err := exec.Command("/bin/sh", "-c", `ifconfig eth0| grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*'`).CombinedOutput()
 		if err != nil {
 			return fmt.Errorf("failed to get IP: %v", err)
 		}

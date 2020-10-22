@@ -1,6 +1,7 @@
 package console
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"io/ioutil"
@@ -9,10 +10,10 @@ import (
 	"strings"
 )
 
-func updatePasswd(pass string) error {
+func getEncrptedPasswd(pass string) (string, error) {
 	oldShadow, err := ioutil.ReadFile("/etc/shadow")
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer func() {
 		ioutil.WriteFile("/etc/shadow", oldShadow, 0640)
@@ -26,8 +27,21 @@ func updatePasswd(pass string) error {
 
 	if err := cmd.Run(); err != nil {
 		os.Stderr.Write(errBuffer.Bytes())
-		return err
+		return "", err
+	}
+	f, err := os.Open("/etc/shadow")
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		fields := strings.Split(scanner.Text(), ":")
+		if len(fields) > 1 && fields[0] == "rancher" {
+			return fields[1], nil
+		}
 	}
 
-	return nil
+	return "", scanner.Err()
 }
