@@ -27,18 +27,22 @@ import (
 func Init() error {
 	var err error
 
+	tty := os.Getenv("TTY")
+	if tty == "" {
+		tty = "/dev/tty1"
+	}
 	if runtime.GOOS == "openbsd" || runtime.GOOS == "freebsd" {
-		out, err = os.OpenFile("/dev/tty", os.O_RDWR, 0)
+		out, err = os.OpenFile(tty, os.O_RDWR, 0)
 		if err != nil {
 			return err
 		}
 		in = int(out.Fd())
 	} else {
-		out, err = os.OpenFile("/dev/tty", os.O_WRONLY, 0)
+		out, err = os.OpenFile(tty, os.O_WRONLY, 0)
 		if err != nil {
 			return err
 		}
-		in, err = syscall.Open("/dev/tty", syscall.O_RDONLY, 0)
+		in, err = syscall.Open(tty, syscall.O_RDONLY, 0)
 		if err != nil {
 			return err
 		}

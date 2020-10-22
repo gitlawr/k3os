@@ -7,6 +7,10 @@ github.com/docker/docker/pkg/reexec
 github.com/docker/go-units
 # github.com/ghodss/yaml v1.0.0
 github.com/ghodss/yaml
+# github.com/gitlawr/console v0.0.0-20201022024914-9b090181c573
+github.com/gitlawr/console/pkg/config
+github.com/gitlawr/console/pkg/console
+github.com/gitlawr/console/pkg/widgets
 # github.com/jroimartin/gocui v0.4.0
 github.com/jroimartin/gocui
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
