@@ -1,10 +1,9 @@
 #!/bin/bash
 set -e -x
 
-cd $(dirname $0)/..
-
 . ./scripts/version
 
+mkdir -p overlay/var/lib/rancher/k3s/agent/images
 output_file="overlay/var/lib/rancher/k3s/agent/images/harvester-airgap-images-${ARCH}.tar"
 if [ ! -f $output_file ]; then
   airgap_image_file='scripts/image-list.txt'
