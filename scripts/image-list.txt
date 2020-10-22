@@ -1,0 +1,22 @@
+docker.io/rancher/coredns-coredns:1.6.9
+docker.io/rancher/klipper-helm:v0.2.7
+docker.io/rancher/klipper-lb:v0.1.2
+docker.io/rancher/library-traefik:1.7.19
+docker.io/rancher/local-path-provisioner:v0.0.11
+docker.io/rancher/metrics-server:v0.3.6
+docker.io/rancher/pause:3.1
+docker.io/bitnami/kubectl                      1.18.6                         5dacb5d170d3a       48.4MB
+docker.io/kubevirt/cdi-apiserver               v1.22.0                        b325c9e609eb7       75.9MB
+docker.io/kubevirt/cdi-controller              v1.22.0                        0b78022c4113f       76.1MB
+docker.io/kubevirt/cdi-importer                v1.22.0                        02cdcca000874       87.3MB
+docker.io/kubevirt/cdi-operator                v1.22.0                        2db08e44154c4       90.5MB
+docker.io/kubevirt/cdi-uploadproxy             v1.22.0                        05eb02382b40e       75.4MB
+docker.io/kubevirt/virt-api                    v0.32.0                        e876999c85c40       85MB
+docker.io/kubevirt/virt-controller             v0.32.0                        5cd19d854a44a       85.1MB
+docker.io/kubevirt/virt-handler                v0.32.0                        365f07cd0c59d       248MB
+docker.io/kubevirt/virt-launcher               v0.32.0                        9244b9cb8c552       243MB
+docker.io/kubevirt/virt-operator               v0.32.0                        ba61bf8e49255       96.9MB
+docker.io/library/alpine                       3                              a24bb4013296f       2.8MB
+docker.io/minio/minio                          RELEASE.2020-08-08T04-50-06Z   a492b83a7b2ad       24MB
+docker.io/rancher/coredns-coredns              1.6.9                          4e797b3234604       13.4MB
+docker.io/rancher/harvester                    v0.0.1                         bbace2fa8ef84       36.4MB
