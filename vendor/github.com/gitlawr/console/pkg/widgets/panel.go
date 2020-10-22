@@ -56,7 +56,6 @@ func (p *Panel) Show() error {
 			return err
 		}
 		v.Title = p.Title
-		v.Wrap = true
 		v.Frame = p.Frame
 		v.FgColor = p.FgColor
 		if _, err := fmt.Fprint(v, p.Content); err != nil {

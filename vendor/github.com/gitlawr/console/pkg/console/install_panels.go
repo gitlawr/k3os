@@ -335,6 +335,9 @@ func addPassword2Panel(c *Console) error {
 			password1V.Close()
 			password2V.Close()
 			cfg.Config.K3OS.Password = password1
+			if err := updatePasswd(password1); err != nil {
+				return err
+			}
 			titleV.SetContent("Specify cluster token")
 			return tokenV.Show()
 		},
@@ -464,7 +467,9 @@ func addConfirmPanel(c *Console) error {
 }
 
 func addInstallPanel(c *Console) error {
+	maxX, maxY := c.Gui.Size()
 	installV := widgets.NewPanel(c.Gui, installPanel)
+	installV.SetLocation(maxX/8, maxY/8, maxX/8*7, maxY/8*7)
 	c.AddElement(installPanel, installV)
 	installV.Frame = true
 	return nil
