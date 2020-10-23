@@ -473,5 +473,6 @@ func addInstallPanel(c *Console) error {
 	installV.SetLocation(maxX/8, maxY/8, maxX/8*7, maxY/8*7)
 	c.AddElement(installPanel, installV)
 	installV.Frame = true
+	installV.Wrap = false
 	return nil
 }

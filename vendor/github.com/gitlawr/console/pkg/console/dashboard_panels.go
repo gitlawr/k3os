@@ -39,7 +39,7 @@ func layoutDashboard(g *gocui.Gui) error {
 			return err
 		}
 		v.Frame = false
-		fmt.Fprintln(v, "Current status: \033[33;7mUnknown\033[0m")
+		fmt.Fprintln(v, "Current status: ")
 		go syncHarvesterStatus(context.Background(), g)
 	}
 	if v, err := g.SetView("footer", 0, maxY-2, maxX, maxY); err != nil {
@@ -54,7 +54,7 @@ func layoutDashboard(g *gocui.Gui) error {
 }
 func syncHarvesterStatus(ctx context.Context, g *gocui.Gui) {
 	status := ""
-	syncDuration := 5 * time.Second
+	syncDuration := 2 * time.Second
 	ticker := time.NewTicker(syncDuration)
 	go func() {
 		<-ctx.Done()
@@ -70,7 +70,7 @@ func syncHarvesterStatus(ctx context.Context, g *gocui.Gui) {
 		}
 		if status == "" {
 			status = wrapColor("Unknown", colorYellow)
-		} else if status == "Ready" {
+		} else if status == "Running" {
 			status = wrapColor(status, colorGreen)
 		} else {
 			status = wrapColor(status, colorYellow)

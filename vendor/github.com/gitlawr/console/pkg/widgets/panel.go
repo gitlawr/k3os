@@ -11,6 +11,7 @@ type Panel struct {
 	Name    string
 	Title   string
 	Frame   bool
+	Wrap    bool
 	FgColor gocui.Attribute
 	Content string
 	X0      int
@@ -57,6 +58,7 @@ func (p *Panel) Show() error {
 		}
 		v.Title = p.Title
 		v.Frame = p.Frame
+		v.Wrap = p.Wrap
 		v.FgColor = p.FgColor
 		if _, err := fmt.Fprint(v, p.Content); err != nil {
 			return err
