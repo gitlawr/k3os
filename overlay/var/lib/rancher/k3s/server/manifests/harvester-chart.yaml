@@ -9,5 +9,5 @@ metadata:
   name: harvester
   namespace: kube-system
 spec:
-  chart: https://%{KUBERNETES_API}%/static/harvester-0.1.0.tgz
+  chart: https://%{KUBERNETES_API}%/static/charts/harvester-0.1.0.tgz
   targetNamespace: harvester-system
