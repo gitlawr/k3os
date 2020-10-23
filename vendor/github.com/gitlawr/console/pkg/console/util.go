@@ -45,3 +45,23 @@ func getEncrptedPasswd(pass string) (string, error) {
 
 	return "", scanner.Err()
 }
+
+func showNext(c *Console, title string, names ...string) error {
+	if title != "" {
+		titleV, err := c.GetElement(titlePanel)
+		if err != nil {
+			return err
+		}
+		titleV.SetContent(title)
+	}
+	for _, name := range names {
+		v, err := c.GetElement(name)
+		if err != nil {
+			return err
+		}
+		if err := v.Show(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
