@@ -88,6 +88,7 @@ func customizeConfig() {
 	harvesterChartValues["minio.persistence.size"] = "20Gi"
 	harvesterChartValues["containers.apiserver.image.imagePullPolicy"] = "IfNotPresent"
 	harvesterChartValues["containers.apiserver.image.tag"] = "v0.0.1"
+	harvesterChartValues["service.harvester.type"] = "LoadBalancer"
 
 	cfg.Config.WriteFiles = []config.File{
 		{
