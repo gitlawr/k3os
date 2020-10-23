@@ -115,7 +115,7 @@ func DoInstall(g *gocui.Gui) error {
 		defer os.Remove(tempFile.Name())
 	}
 	cmd := exec.Command("/usr/libexec/k3os/install")
-	//cmd := exec.Command("sh", "-c", "sleep 1;echo \"a\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\";sleep 1; echo world;sleep 1;echo \"a\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\";sleep 1;echo \"a\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\";sleep 1;echo \"a\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\";")
+	//cmd := exec.Command("sh", "-c", "sleep 1;echo \"aaaaaaaaaaaaaaaaaaaaaaa  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\";sleep 1; echo world;sleep 1;echo \"a\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\";sleep 1;echo \"a\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\";sleep 1;echo \"a\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\\nblah\";")
 	cmd.Env = append(os.Environ(), ev...)
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
@@ -130,7 +130,7 @@ func DoInstall(g *gocui.Gui) error {
 	}
 
 	scanner := bufio.NewScanner(stdout)
-	scanner.Split(bufio.ScanWords)
+	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		m := scanner.Text()
 		g.Update(func(g *gocui.Gui) error {

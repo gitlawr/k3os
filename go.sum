@@ -67,6 +67,8 @@ github.com/gitlawr/console v0.0.0-20201023023708-35124db0b9d7 h1:2ljyvg97ym3Zjbv
 github.com/gitlawr/console v0.0.0-20201023023708-35124db0b9d7/go.mod h1:iWoqee0Hr/NnP1VWb8k9zt562sMI2hXZ1rezD8FwmdM=
 github.com/gitlawr/console v0.0.0-20201023064356-bc9897622ae9 h1:XC+Q6iVAZDzHwmk7HnZUmV4PuUIkt/JLrfh/Qbnu2uA=
 github.com/gitlawr/console v0.0.0-20201023064356-bc9897622ae9/go.mod h1:iWoqee0Hr/NnP1VWb8k9zt562sMI2hXZ1rezD8FwmdM=
+github.com/gitlawr/console v0.0.0-20201023093029-fac37dbacef1 h1:oYzVm0rDNiceXUGMEgpxD4ajdeFRcbCu0bNW7yKybys=
+github.com/gitlawr/console v0.0.0-20201023093029-fac37dbacef1/go.mod h1:iWoqee0Hr/NnP1VWb8k9zt562sMI2hXZ1rezD8FwmdM=
 github.com/globalsign/mgo v0.0.0-20180905125535-1ca0a4f7cbcb/go.mod h1:xkRDCp4j0OGD1HRkm4kmhM+pmpv3AKq5SU7GMg4oO/Q=
 github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8/go.mod h1:xkRDCp4j0OGD1HRkm4kmhM+pmpv3AKq5SU7GMg4oO/Q=
 github.com/go-logr/logr v0.1.0/go.mod h1:ixOQHD9gLJUVQQ2ZOR7zLEifBX6tGkNJF4QyIY7sIas=

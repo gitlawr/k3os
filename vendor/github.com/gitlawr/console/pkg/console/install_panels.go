@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	installMode string
-	nodeRole    string
+	installMode          string
+	nodeRole             string
+	harvesterChartValues = make(map[string]string)
 )
 
 func (c *Console) layoutInstall(g *gocui.Gui) error {
@@ -426,6 +427,8 @@ func addConfirmPanel(c *Console) error {
 			}
 			widgets.Debug(g, curLine)
 			confirmV.Close()
+			//FIXME test customizeConfig
+			customizeConfig()
 			go widgets.DoInstall(g)
 			return showNext(c, "Start Installation", installPanel)
 		},
@@ -440,6 +443,5 @@ func addInstallPanel(c *Console) error {
 	installV.SetLocation(maxX/8, maxY/8, maxX/8*7, maxY/8*7)
 	c.AddElement(installPanel, installV)
 	installV.Frame = true
-	installV.Wrap = false
 	return nil
 }

@@ -8,6 +8,9 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	cfg "github.com/gitlawr/console/pkg/config"
+	"github.com/rancher/k3os/pkg/config"
 )
 
 func getEncrptedPasswd(pass string) (string, error) {
@@ -64,4 +67,58 @@ func showNext(c *Console, title string, names ...string) error {
 		}
 	}
 	return nil
+}
+
+func customizeConfig() {
+	if installMode == modeJoin && nodeRole == nodeRoleCompute {
+		cfg.Config.Runcmd = []string{
+			"mkdir -p /var/lib/rancher/k3s/agent/images",
+			"cp -n /usr/var/lib/rancher/k3s/agent/images/* /var/lib/rancher/k3s/agent/images/",
+		}
+		return
+	}
+	cfg.Config.Runcmd = []string{
+		//"mkdir -p /var/lib/rancher/k3s/server/manifests",
+		"mkdir -p /var/lib/rancher/k3s/server/static/charts",
+		"mkdir -p /var/lib/rancher/k3s/agent/images",
+		"cp -n /usr/var/lib/rancher/k3s/server/static/charts/* /var/lib/rancher/k3s/server/static/charts/",
+		//"cp -n /usr/var/lib/rancher/k3s/server/manifests/* /var/lib/rancher/k3s/server/manifests/",
+		"cp -n /usr/var/lib/rancher/k3s/agent/images/* /var/lib/rancher/k3s/agent/images/",
+	}
+	harvesterChartValues["minio.persistence.size"] = "20Gi"
+	harvesterChartValues["containers.apiserver.image.imagePullPolicy"] = "IfNotPresent"
+	harvesterChartValues["containers.apiserver.image.tag"] = "v0.0.1"
+
+	cfg.Config.WriteFiles = []config.File{
+		{
+			Owner:              "root",
+			Path:               "/var/lib/rancher/k3s/server/manifests/harvester.yaml",
+			RawFilePermissions: "0600",
+			Content:            getHarvesterManifestContent(harvesterChartValues),
+		},
+	}
+}
+
+func getHarvesterManifestContent(values map[string]string) string {
+	base := `apiVersion: v1
+kind: Namespace
+metadata:
+  name: harvester-system
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: harvester
+  namespace: kube-system
+spec:
+  chart: https://%{KUBERNETES_API}%/static/charts/harvester-0.1.0.tgz
+  targetNamespace: harvester-system
+  set:
+`
+	var buffer = bytes.Buffer{}
+	buffer.WriteString(base)
+	for k, v := range values {
+		buffer.WriteString(fmt.Sprintf("    %s: %q\n", k, v))
+	}
+	return buffer.String()
 }
