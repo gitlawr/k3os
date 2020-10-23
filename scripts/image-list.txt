@@ -5,6 +5,7 @@ docker.io/rancher/library-traefik:1.7.19
 docker.io/rancher/local-path-provisioner:v0.0.11
 docker.io/rancher/metrics-server:v0.3.6
 docker.io/rancher/pause:3.1
+docker.io/rancher/system-upgrade-controller:v0.6.2
 docker.io/bitnami/kubectl:1.18.6
 docker.io/kubevirt/cdi-apiserver:v1.22.0
 docker.io/kubevirt/cdi-controller:v1.22.0
