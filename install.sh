@@ -165,7 +165,7 @@ set gfxpayload=keep
 insmod all_video
 insmod gfxterm
 
-menuentry "k3OS Current" {
+menuentry "Start Harvester" {
   search.fs_label K3OS_STATE root
   set sqfile=/k3os/system/kernel/current/kernel.squashfs
   loopback loop0 /\$sqfile
