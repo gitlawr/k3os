@@ -58,7 +58,7 @@ func layoutDashboard(g *gocui.Gui) error {
 }
 
 func getHarvesterIp() (string, error) {
-	ip, err := exec.Command("/bin/sh", "-c", `cat /etc/rancher/k3s/k3s-service.env|grep K3S_URL|grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`).CombinedOutput()
+	ip, err := exec.Command("/bin/sh", "-c", `sudo cat /etc/rancher/k3s/k3s-service.env|grep K3S_URL|grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`).CombinedOutput()
 	if err != nil {
 		return "", err
 	}
