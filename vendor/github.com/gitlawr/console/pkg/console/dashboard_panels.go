@@ -58,15 +58,15 @@ func layoutDashboard(g *gocui.Gui) error {
 }
 
 func getHarvesterIp() (string, error) {
-	ip, err := exec.Command("/bin/sh", "-c", `sudo cat /etc/rancher/k3s/k3s-service.env|grep K3S_URL|grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`).CombinedOutput()
-	if err != nil {
-		return "", err
-	}
-	if string(ip) != "" {
-		return string(ip), nil
-	}
+	// ip, err := exec.Command("/bin/sh", "-c", `sudo cat /etc/rancher/k3s/k3s-service.env|grep K3S_URL|grep -Eo "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`).CombinedOutput()
+	// if err != nil {
+	// 	return "", errors.Wrap(err, string(ip))
+	// }
+	// if string(ip) != "" {
+	// 	return string(ip), nil
+	// }
 	//it's the master,get the node ip
-	ip, err = exec.Command("/bin/sh", "-c", `ifconfig eth0| grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*'`).CombinedOutput()
+	ip, err := exec.Command("/bin/sh", "-c", `ifconfig eth0| grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*'`).CombinedOutput()
 	return string(ip), err
 }
 
