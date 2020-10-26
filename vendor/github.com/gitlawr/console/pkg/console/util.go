@@ -79,11 +79,11 @@ func customizeConfig() {
 	}
 	cfg.Config.Runcmd = []string{
 		//"mkdir -p /var/lib/rancher/k3s/server/manifests",
-		"mkdir -p /var/lib/rancher/k3s/server/static/charts",
-		"mkdir -p /var/lib/rancher/k3s/agent/images",
-		"cp -n /usr/var/lib/rancher/k3s/server/static/charts/* /var/lib/rancher/k3s/server/static/charts/",
+		//"mkdir -p /var/lib/rancher/k3s/server/static/charts",
+		//"mkdir -p /var/lib/rancher/k3s/agent/images",
+		//"cp -n /usr/var/lib/rancher/k3s/server/static/charts/* /var/lib/rancher/k3s/server/static/charts/",
 		//"cp -n /usr/var/lib/rancher/k3s/server/manifests/* /var/lib/rancher/k3s/server/manifests/",
-		"cp -n /usr/var/lib/rancher/k3s/agent/images/* /var/lib/rancher/k3s/agent/images/",
+		//"cp -n /usr/var/lib/rancher/k3s/agent/images/* /var/lib/rancher/k3s/agent/images/",
 	}
 	harvesterChartValues["minio.persistence.size"] = "20Gi"
 	harvesterChartValues["containers.apiserver.image.imagePullPolicy"] = "IfNotPresent"
