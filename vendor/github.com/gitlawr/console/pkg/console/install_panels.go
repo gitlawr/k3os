@@ -45,7 +45,6 @@ func setPanels(c *Console) error {
 		addNodeRolePanel,
 		addServerURLPanel,
 		addOsPasswordPanels,
-		addAdminPasswordPanels,
 		addTokenPanel,
 		addCloudInitPanel,
 		addConfirmPanel,
@@ -273,7 +272,8 @@ func addOsPasswordPanels(c *Console) error {
 			}
 			cfg.Config.K3OS.Password = encrpyted
 			if installMode == modeCreate {
-				return showNext(c, "Specify Harvester admin password", adminPasswordConfirmPanel, adminPasswordPanel)
+				return showNext(c, "Specify cluster token", tokenPanel)
+				// return showNext(c, "Specify Harvester admin password", adminPasswordConfirmPanel, adminPasswordPanel)
 			} else {
 				return showNext(c, "Specify exisiting server URL", serverURLPanel)
 			}

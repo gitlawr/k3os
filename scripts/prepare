@@ -14,8 +14,13 @@ mkdir -p ${BASE_PATH}/server/manifests
 mkdir -p ${BASE_PATH}/server/static/charts
 mkdir -p ${BASE_PATH}/agent/images
 
+#harvester chart
 git clone --branch ${HARVESTER_VERSION} https://github.com/rancher/harvester.git /tmp/harvester
 helm package /tmp/harvester/deploy/charts/harvester -d ${BASE_PATH}/server/static/charts
+
+#console
+git clone https://github.com/gitlawr/console.git $GOPATH/src/github.com/gitlawr/console
+GO111MODULE=off go build -o overlay/sbin/harvester-console $GOPATH/src/github.com/gitlawr/console/main.go
 
 if [ "$BUILD_OFF_LINE" = true ] && [ ! -f $output_file ]; then
   output_file="${BASE_PATH}/agent/images/harvester-airgap-images-${ARCH}.tar"
