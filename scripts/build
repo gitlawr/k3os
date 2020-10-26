@@ -6,8 +6,6 @@ source $(dirname $0)/images
 
 cd $(dirname $0)/..
 
-. ./scripts/package-airgap
-
 cd images
 
 build_all "$@"
