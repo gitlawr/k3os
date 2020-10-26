@@ -149,15 +149,15 @@ do_copy()
     fi
 
     #copy offline artifacts
-    echo "about to copy offline artifacts"
-    ls "${TARGET}"
-    mkdir -p "${TARGET}/var/lib/rancher/k3s/agent/images"
-    mkdir -p "${TARGET}/var/lib/rancher/k3s/server/manifests"
-    mkdir -p "${TARGET}/var/lib/rancher/k3s/server/static/charts"
-    ls "${TARGET}/usr/var/lib/rancher/k3s/agent/images"
-    cp -n "${TARGET}/usr/var/lib/rancher/k3s/agent/images/*" "${TARGET}/var/lib/rancher/k3s/agent/images/*" 
-    cp -n "${TARGET}/usr/var/lib/rancher/k3s/server/manifests/*" "${TARGET}/var/lib/rancher/k3s/server/manifests/*" 
-    cp -n "${TARGET}/usr/var/lib/rancher/k3s/server/static/charts/*" "${TARGET}/var/lib/rancher/k3s/server/static/charts/*" 
+    # echo "about to copy offline artifacts"
+    # ls "${TARGET}"
+    # mkdir -p "${TARGET}/var/lib/rancher/k3s/agent/images"
+    # mkdir -p "${TARGET}/var/lib/rancher/k3s/server/manifests"
+    # mkdir -p "${TARGET}/var/lib/rancher/k3s/server/static/charts"
+    # ls "${TARGET}/usr/var/lib/rancher/k3s/agent/images"
+    # cp -n "${TARGET}/usr/var/lib/rancher/k3s/agent/images/*" "${TARGET}/var/lib/rancher/k3s/agent/images/*" 
+    # cp -n "${TARGET}/usr/var/lib/rancher/k3s/server/manifests/*" "${TARGET}/var/lib/rancher/k3s/server/manifests/*" 
+    # cp -n "${TARGET}/usr/var/lib/rancher/k3s/server/static/charts/*" "${TARGET}/var/lib/rancher/k3s/server/static/charts/*" 
 }
 
 install_grub()
