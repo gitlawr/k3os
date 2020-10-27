@@ -86,6 +86,7 @@ RUN rm -rf \
 COPY --from=k3s /output/install.sh /usr/src/image/libexec/k3os/k3s-install.sh
 COPY --from=progs /output/metadata /usr/src/image/sbin/metadata
 COPY --from=progs /output/kubectx/kubectx /output/kubectx/kubens /usr/src/image/bin/
+COPY --from=progs /usr/bin/zstd /usr/src/image/bin/
 
 COPY overlay/ /usr/src/image/
 
