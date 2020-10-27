@@ -73,7 +73,9 @@ func customizeConfig() {
 	if installMode == modeJoin && nodeRole == nodeRoleCompute {
 		cfg.Config.Runcmd = []string{
 			"mkdir -p /var/lib/rancher/k3s/agent/images",
-			"cp -n /usr/var/lib/rancher/k3s/agent/images/* /var/lib/rancher/k3s/agent/images/",
+			"SRC=/usr/var/lib/rancher/k3s/agent/images/harvester-airgap-images-amd64.tar.zst DST=/var/lib/rancher/k3s/agent/images/harvester-airgap-images-amd64.tar; \\",
+			"[ -f $SRC ] && [ ! -f $DST ] && zstd -d $SRC -o $DST",
+			//"cp -n /usr/var/lib/rancher/k3s/agent/images/* /var/lib/rancher/k3s/agent/images/",
 		}
 		return
 	}
@@ -83,8 +85,10 @@ func customizeConfig() {
 		"mkdir -p /var/lib/rancher/k3s/server/static/charts",
 		"mkdir -p /var/lib/rancher/k3s/agent/images",
 		"cp -n /usr/var/lib/rancher/k3s/server/static/charts/* /var/lib/rancher/k3s/server/static/charts/",
+		"SRC=/usr/var/lib/rancher/k3s/agent/images/harvester-airgap-images-amd64.tar.zst DST=/var/lib/rancher/k3s/agent/images/harvester-airgap-images-amd64.tar; \\",
+		"[ -f $SRC ] && [ ! -f $DST ] && zstd -d $SRC -o $DST",
 		//"cp -n /usr/var/lib/rancher/k3s/server/manifests/* /var/lib/rancher/k3s/server/manifests/",
-		"cp -n /usr/var/lib/rancher/k3s/agent/images/* /var/lib/rancher/k3s/agent/images/",
+		//"cp -n /usr/var/lib/rancher/k3s/agent/images/* /var/lib/rancher/k3s/agent/images/",
 	}
 	harvesterChartValues["minio.persistence.size"] = "20Gi"
 	harvesterChartValues["containers.apiserver.image.imagePullPolicy"] = "IfNotPresent"
