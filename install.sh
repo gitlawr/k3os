@@ -148,9 +148,21 @@ do_copy()
         fi
     fi
 
+
     #copy offline artifacts
-    # echo "about to copy offline artifacts"
-    # ls "${TARGET}"
+    echo "about to copy offline artifacts"
+    echo "${DISTRO} has:"
+    ls ${DISTRO}
+    echo "${TARGET} has:"
+    ls ${TARGET}
+    cp "${DISTRO}/myisofile" "${TARGET}/myisofile"
+    #mkdir -p "${TARGET}/images"
+    #mkdir -p "${TARGET}/manifests"
+    #mkdir -p "${TARGET}/charts"
+    #cp "${DISTRO}/images/*" "${TARGET}/images"
+    #cp "${DISTRO}/manifests/*" "${TARGET}/manifests"
+    #cp "${DISTRO}/charts/*" "${TARGET}/charts"
+
     # mkdir -p "${TARGET}/var/lib/rancher/k3s/agent/images"
     # mkdir -p "${TARGET}/var/lib/rancher/k3s/server/manifests"
     # mkdir -p "${TARGET}/var/lib/rancher/k3s/server/static/charts"
