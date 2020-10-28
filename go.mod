@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/docker/docker v1.13.1
 	github.com/ghodss/yaml v1.0.0
-	github.com/gitlawr/console v0.0.0-20201027040743-cb5a8a5485bc
+	github.com/gitlawr/console v0.0.0-20201028052104-d5ae457e2c20
 	github.com/mattn/go-isatty v0.0.10
 	github.com/otiai10/copy v1.0.2
 	github.com/paultag/go-modprobe v0.0.0-20180523225901-7ccf6a1b5271
