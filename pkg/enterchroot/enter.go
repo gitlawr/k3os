@@ -375,29 +375,97 @@ func run(data string) error {
 	return syscall.Exec("/usr/init", os.Args, os.Environ())
 }
 
+// copyArtifacts copies all files from /var to /k3os/data/var
 func copyArtifacts() error {
-	dest := "/k3os/data/myisofile"
-	path := "/myisofile"
+	destBase := "/k3os/data/var"
+	src := "/var"
+
+	// copy directory tree first
+	if err := filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		// skip non directories
+		if !info.Mode().IsDir() {
+			return nil
+		}
+		dest := filepath.Join(destBase, path)
+		// create the directory
+
+		if err := os.Mkdir(dest, info.Mode()); err != nil {
+			return err
+		}
+		if err := copyMetadata(info, dest); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+
 	buf := make([]byte, 32768)
-	new, err := os.OpenFile(dest, os.O_WRONLY|os.O_CREATE, os.FileMode(int(0777)))
-	if err != nil {
+
+	// now move files
+	if err := filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		dest := filepath.Join(destBase, path)
+		logrus.Debugf("Moving %s => %s", path, dest)
+		switch {
+		case info.Mode().IsDir():
+			// already done the directories
+			return nil
+		case info.Mode().IsRegular():
+			new, err := os.OpenFile(dest, os.O_WRONLY|os.O_CREATE, info.Mode())
+			if err != nil {
+				return err
+			}
+			old, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			if _, err := io.CopyBuffer(new, old, buf); err != nil {
+				return err
+			}
+			if err := old.Close(); err != nil {
+				return err
+			}
+			if err := new.Close(); err != nil {
+				return err
+			}
+			// it is ok if we do not remove all files now
+			_ = os.Remove(path)
+		default:
+			return errors.New("Unsupported file type")
+		}
+		if err := copyMetadata(info, dest); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
 		return err
 	}
-	old, err := os.Open(path)
-	if err != nil {
+
+	return nil
+}
+
+func copyMetadata(info os.FileInfo, path string) error {
+	// would rather use fd than path but Go makes this very difficult at present
+	stat := info.Sys().(*syscall.Stat_t)
+	if err := unix.Lchown(path, int(stat.Uid), int(stat.Gid)); err != nil {
 		return err
 	}
-	if _, err := io.CopyBuffer(new, old, buf); err != nil {
+	timespec := []unix.Timespec{unix.Timespec(stat.Atim), unix.Timespec(stat.Mtim)}
+	if err := unix.UtimesNanoAt(unix.AT_FDCWD, path, timespec, unix.AT_SYMLINK_NOFOLLOW); err != nil {
 		return err
 	}
-	if err := old.Close(); err != nil {
-		return err
+	// after chown suid bits may be dropped; re-set on non symlink files
+	if info.Mode()&os.ModeSymlink == 0 {
+		if err := os.Chmod(path, info.Mode()); err != nil {
+			return err
+		}
 	}
-	if err := new.Close(); err != nil {
-		return err
-	}
-	// it is ok if we do not remove all files now
-	_ = os.Remove(path)
 	return nil
 }
 

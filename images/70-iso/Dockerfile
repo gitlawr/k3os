@@ -21,7 +21,18 @@ COPY grub.cfg /usr/src/iso/boot/grub/grub.cfg
 COPY --from=package /output/ /usr/src/iso/
 
 COPY config.yaml /usr/src/iso/k3os/system/
-RUN echo "testing" > /usr/src/iso/myisofile
+#RUN echo "testing" > /usr/src/iso/myisofile
+
+RUN mkdir -p /usr/src/iso/var/lib/rancher/k3s/agent/images && \
+    mkdir -p /usr/src/iso/var/lib/rancher/k3s/server/static/charts && \
+    mkdir -p /usr/src/iso/var/lib/rancher/k3s/server/manifests
+
+COPY harvester-0.1.0.tgz /usr/src/iso/var/lib/rancher/k3s/server/static/charts
+COPY longhorn-1.0.2.tgz /usr/src/iso/var/lib/rancher/k3s/server/static/charts
+COPY longhorn.yaml /usr/src/iso/var/lib/rancher/k3s/server/manifests
+COPY harvester-images.tar.zst /usr/src/iso/var/lib/rancher/k3s/agent/images
+
+
 RUN mkdir -p /output && \
     grub-mkrescue -o /output/k3os.iso /usr/src/iso/. -- -volid K3OS -joliet on && \
     [ -e /output/k3os.iso ] # grub-mkrescue doesn't exit non-zero on failure
