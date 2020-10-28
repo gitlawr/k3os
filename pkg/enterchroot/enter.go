@@ -264,6 +264,11 @@ func run(data string) error {
 		}
 	}
 
+	// copy artifacts
+	if err := copyArtifacts(); err != nil {
+		logrus.Info(err)
+	}
+
 	//testing
 	files, err := ioutil.ReadDir("/")
 	if err != nil {
@@ -368,6 +373,32 @@ func run(data string) error {
 	os.Unsetenv("ENTER_DATA")
 	os.Unsetenv("ENTER_DEVICE")
 	return syscall.Exec("/usr/init", os.Args, os.Environ())
+}
+
+func copyArtifacts() error {
+	dest := "/k3os/data/myisofile"
+	path := "/myisofile"
+	buf := make([]byte, 32768)
+	new, err := os.OpenFile(dest, os.O_WRONLY|os.O_CREATE, os.FileMode(int(0777)))
+	if err != nil {
+		return err
+	}
+	old, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	if _, err := io.CopyBuffer(new, old, buf); err != nil {
+		return err
+	}
+	if err := old.Close(); err != nil {
+		return err
+	}
+	if err := new.Close(); err != nil {
+		return err
+	}
+	// it is ok if we do not remove all files now
+	_ = os.Remove(path)
+	return nil
 }
 
 func checkSquashfs() error {
