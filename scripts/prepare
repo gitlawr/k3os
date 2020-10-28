@@ -2,30 +2,25 @@
 set -e -x
 
 
-source $(dirname $0)/version
-
 cd $(dirname $0)/..
 
-BUILD_OFF_LINE="false"
 HARVESTER_VERSION=master
-BASE_PATH=overlay/var/lib/rancher/k3s
-
-mkdir -p ${BASE_PATH}/server/manifests
-mkdir -p ${BASE_PATH}/server/static/charts
-mkdir -p ${BASE_PATH}/agent/images
 
 #harvester chart
-git clone --branch ${HARVESTER_VERSION} https://github.com/rancher/harvester.git /tmp/harvester
-helm package /tmp/harvester/deploy/charts/harvester -d ${BASE_PATH}/server/static/charts
+#git clone --branch ${HARVESTER_VERSION} https://github.com/rancher/harvester.git /tmp/harvester
+#helm package /tmp/harvester/deploy/charts/harvester -d ${BASE_PATH}/server/static/charts
 
 #console
-git clone https://github.com/gitlawr/console.git $GOPATH/src/github.com/gitlawr/console
-GO111MODULE=off go build -o overlay/sbin/harvester-console $GOPATH/src/github.com/gitlawr/console/main.go
+#git clone https://github.com/gitlawr/console.git $GOPATH/src/github.com/gitlawr/console
+#GO111MODULE=off go build -o overlay/sbin/harvester-console $GOPATH/src/github.com/gitlawr/console/main.go
 
-if [ "$BUILD_OFF_LINE" = true ] && [ ! -f $output_file ]; then
-  output_file="${BASE_PATH}/agent/images/harvester-airgap-images-${ARCH}.tar"
+
+output_file="images/70-iso/harvester-images.tar"
+if [ ! -f $output_file ]; then
   airgap_image_file='scripts/image-list.txt'
   images=$(cat "${airgap_image_file}")
   xargs -n1 docker pull <<< "${images}"
   docker save ${images} -o ${output_file}
+
+  zstd --rm ${output_file} -o ${output_file}.zst
 fi
