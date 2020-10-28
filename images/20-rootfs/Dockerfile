@@ -95,6 +95,7 @@ RUN ln -s /k3os/system/k3s/current/k3s /usr/src/image/sbin/k3s
 RUN ln -s k3s /usr/src/image/sbin/kubectl
 RUN ln -s k3s /usr/src/image/sbin/crictl
 RUN ln -s k3s /usr/src/image/sbin/ctr
+RUN ln -s /k3os/system/k3os/current/k3os /usr/src/image/sbin/harvester-console
 
 COPY install.sh /usr/src/image/libexec/k3os/install
 RUN sed -i -e "s/%VERSION%/${VERSION}/g" -e "s/%ARCH%/${ARCH}/g" /usr/src/image/lib/os-release
