@@ -150,11 +150,7 @@ do_copy()
 
 
     #copy offline artifacts
-    echo "about to copy offline artifacts"
-    echo "${DISTRO} has:"
-    ls ${DISTRO}
-    echo "${TARGET} has:"
-    ls ${TARGET}
+    echo "Copying ISO artifacts"
     cp -r "${DISTRO}/var" "${TARGET}"
 
     # decompress airgap images
@@ -163,20 +159,6 @@ do_copy()
         echo "Decompressing airgap images"
         zstd -d --rm "${TARGET}/${airgap_image_path}.zst" -o "${TARGET}/${airgap_image_path}"
     fi
-    #mkdir -p "${TARGET}/images"
-    #mkdir -p "${TARGET}/manifests"
-    #mkdir -p "${TARGET}/charts"
-    #cp "${DISTRO}/images/*" "${TARGET}/images"
-    #cp "${DISTRO}/manifests/*" "${TARGET}/manifests"
-    #cp "${DISTRO}/charts/*" "${TARGET}/charts"
-
-    # mkdir -p "${TARGET}/var/lib/rancher/k3s/agent/images"
-    # mkdir -p "${TARGET}/var/lib/rancher/k3s/server/manifests"
-    # mkdir -p "${TARGET}/var/lib/rancher/k3s/server/static/charts"
-    # ls "${TARGET}/usr/var/lib/rancher/k3s/agent/images"
-    # cp -n "${TARGET}/usr/var/lib/rancher/k3s/agent/images/*" "${TARGET}/var/lib/rancher/k3s/agent/images/*" 
-    # cp -n "${TARGET}/usr/var/lib/rancher/k3s/server/manifests/*" "${TARGET}/var/lib/rancher/k3s/server/manifests/*" 
-    # cp -n "${TARGET}/usr/var/lib/rancher/k3s/server/static/charts/*" "${TARGET}/var/lib/rancher/k3s/server/static/charts/*" 
 }
 
 install_grub()
@@ -375,7 +357,7 @@ if [ "$K3OS_INSTALL_POWER_OFF" = true ] || grep -q 'k3os.install.power_off=true'
     poweroff -f
 else
     echo "Installation completed"
-    echo " * Rebooting system in 5 seconds (CTRL+C to cancel)"
+    echo " * Rebooting system in 5 seconds"
     sleep 5
     reboot -f
 fi
