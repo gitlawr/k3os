@@ -161,7 +161,7 @@ do_copy()
     airgap_image_path="var/lib/rancher/k3s/agent/images/harvester-images.tar"
     if [ -f "${TARGET}/${airgap_image_path}.zst" ]; then
         echo "Decompressing airgap images"
-        zstd -d "${TARGET}/${airgap_image_path}.zst" -o "${TARGET}/${airgap_image_path}"
+        zstd -d --rm "${TARGET}/${airgap_image_path}.zst" -o "${TARGET}/${airgap_image_path}"
     fi
     #mkdir -p "${TARGET}/images"
     #mkdir -p "${TARGET}/manifests"
