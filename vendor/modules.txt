@@ -7,7 +7,7 @@ github.com/docker/docker/pkg/reexec
 github.com/docker/go-units
 # github.com/ghodss/yaml v1.0.0
 github.com/ghodss/yaml
-# github.com/gitlawr/console v0.0.0-20201028052104-d5ae457e2c20
+# github.com/gitlawr/console v0.0.0-20201028092130-f876724abb9f
 github.com/gitlawr/console/pkg/config
 github.com/gitlawr/console/pkg/console
 github.com/gitlawr/console/pkg/widgets

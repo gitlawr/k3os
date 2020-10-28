@@ -88,6 +88,11 @@ func customizeConfig() {
 			Content:            getHarvesterManifestContent(harvesterChartValues),
 		},
 	}
+	cfg.Config.K3OS.K3sArgs = []string{
+		"server",
+		"--disable",
+		"local-storage",
+	}
 }
 
 func getHarvesterManifestContent(values map[string]string) string {
