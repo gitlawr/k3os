@@ -267,7 +267,7 @@ func run(data string) error {
 	//testing
 	files, err := ioutil.ReadDir("/")
 	if err != nil {
-		return err
+		logrus.Info(err)
 	}
 	var buf bytes.Buffer
 	buf.WriteString("data is : " + data + "\n")
@@ -280,7 +280,7 @@ func run(data string) error {
 	buf.WriteString("\nend /\n")
 	files, err = ioutil.ReadDir("/mnt")
 	if err != nil {
-		return err
+		logrus.Info(err)
 	}
 	buf.WriteString("/mnt has:\n")
 	for _, f := range files {
@@ -289,7 +289,7 @@ func run(data string) error {
 	buf.WriteString("\nend /mnt\n")
 	files, err = ioutil.ReadDir("/k3os/data")
 	if err != nil {
-		return err
+		logrus.Info(err)
 	}
 	buf.WriteString("/k3os/data has:\n")
 	for _, f := range files {
@@ -298,7 +298,7 @@ func run(data string) error {
 	buf.WriteString("\nend /k3os/data\n")
 	files, err = ioutil.ReadDir("/k3os/data/.base")
 	if err != nil {
-		return err
+		logrus.Info(err)
 	}
 	buf.WriteString("/k3os/data/.base has:\n")
 	for _, f := range files {
@@ -314,7 +314,7 @@ func run(data string) error {
 	buf.WriteString("after pivot:\n")
 	files, err = ioutil.ReadDir("/")
 	if err != nil {
-		return err
+		logrus.Info(err)
 	}
 	buf.WriteString("/ has:\n")
 	for _, f := range files {
@@ -329,7 +329,7 @@ func run(data string) error {
 	buf.WriteString("after forcemount:\n")
 	files, err = ioutil.ReadDir("/")
 	if err != nil {
-		return err
+		logrus.Info(err)
 	}
 	buf.WriteString("/ has:\n")
 	for _, f := range files {
@@ -348,7 +348,7 @@ func run(data string) error {
 	buf.WriteString("after chroot and chdir:\n")
 	files, err = ioutil.ReadDir("/")
 	if err != nil {
-		return err
+		logrus.Info(err)
 	}
 	buf.WriteString("/ has:\n")
 	for _, f := range files {
@@ -362,7 +362,7 @@ func run(data string) error {
 
 	//testing
 	if err := ioutil.WriteFile("/myfile", buf.Bytes(), os.FileMode(int(0777))); err != nil {
-		return err
+		logrus.Info(err)
 	}
 	os.Unsetenv("ENTER_ROOT")
 	os.Unsetenv("ENTER_DATA")
