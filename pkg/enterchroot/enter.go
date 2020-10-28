@@ -377,7 +377,7 @@ func run(data string) error {
 
 // copyArtifacts copies all files from /var to /k3os/data/var
 func copyArtifacts() error {
-	destBase := "/k3os/data/var"
+	destBase := "/k3os/data"
 	src := "/var"
 
 	// copy directory tree first
