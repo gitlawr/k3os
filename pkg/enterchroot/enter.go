@@ -1,7 +1,6 @@
 package enterchroot
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -265,82 +264,19 @@ func run(data string) error {
 	}
 
 	// copy artifacts
+	fmt.Println("Preparing files")
 	if err := copyArtifacts(); err != nil {
 		logrus.Info(err)
 	}
-
-	//testing
-	files, err := ioutil.ReadDir("/")
-	if err != nil {
-		logrus.Info(err)
-	}
-	var buf bytes.Buffer
-	buf.WriteString("data is : " + data + "\n")
-	buf.WriteString("root is : " + root + "\n")
-	buf.WriteString("device is : " + device + "\n")
-	buf.WriteString("/ has:\n")
-	for _, f := range files {
-		buf.WriteString(f.Name() + ", ")
-	}
-	buf.WriteString("\nend /\n")
-	files, err = ioutil.ReadDir("/mnt")
-	if err != nil {
-		logrus.Info(err)
-	}
-	buf.WriteString("/mnt has:\n")
-	for _, f := range files {
-		buf.WriteString(f.Name() + ", ")
-	}
-	buf.WriteString("\nend /mnt\n")
-	files, err = ioutil.ReadDir("/k3os/data")
-	if err != nil {
-		logrus.Info(err)
-	}
-	buf.WriteString("/k3os/data has:\n")
-	for _, f := range files {
-		buf.WriteString(f.Name() + ", ")
-	}
-	buf.WriteString("\nend /k3os/data\n")
-	files, err = ioutil.ReadDir("/k3os/data/.base")
-	if err != nil {
-		logrus.Info(err)
-	}
-	buf.WriteString("/k3os/data/.base has:\n")
-	for _, f := range files {
-		buf.WriteString(f.Name() + ", ")
-	}
-	buf.WriteString("\nend /k3os/data/.base\n")
 
 	logrus.Debugf("pivoting to . .base")
 	if err := syscall.PivotRoot(".", ".base"); err != nil {
 		return errors.Wrap(err, "pivot_root failed")
 	}
 
-	buf.WriteString("after pivot:\n")
-	files, err = ioutil.ReadDir("/")
-	if err != nil {
-		logrus.Info(err)
-	}
-	buf.WriteString("/ has:\n")
-	for _, f := range files {
-		buf.WriteString(f.Name() + ", ")
-	}
-	buf.WriteString("\nend /\n")
-
 	if err := mount.ForceMount("", ".", "none", "rprivate"); err != nil {
 		return errors.Wrapf(err, "making . private %s", data)
 	}
-
-	buf.WriteString("after forcemount:\n")
-	files, err = ioutil.ReadDir("/")
-	if err != nil {
-		logrus.Info(err)
-	}
-	buf.WriteString("/ has:\n")
-	for _, f := range files {
-		buf.WriteString(f.Name() + ", ")
-	}
-	buf.WriteString("\nend /\n")
 
 	if err := syscall.Chroot("/"); err != nil {
 		return err
@@ -350,25 +286,10 @@ func run(data string) error {
 		return err
 	}
 
-	buf.WriteString("after chroot and chdir:\n")
-	files, err = ioutil.ReadDir("/")
-	if err != nil {
-		logrus.Info(err)
-	}
-	buf.WriteString("/ has:\n")
-	for _, f := range files {
-		buf.WriteString(f.Name() + ", ")
-	}
-	buf.WriteString("\nend /\n")
-
 	if _, err := os.Stat("/usr/init"); err != nil {
 		return errors.Wrap(err, "failed to find /usr/init")
 	}
 
-	//testing
-	if err := ioutil.WriteFile("/myfile", buf.Bytes(), os.FileMode(int(0777))); err != nil {
-		logrus.Info(err)
-	}
 	os.Unsetenv("ENTER_ROOT")
 	os.Unsetenv("ENTER_DATA")
 	os.Unsetenv("ENTER_DEVICE")
