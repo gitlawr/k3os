@@ -16,7 +16,7 @@ HARVESTER_VERSION=master
 
 
 output_file="images/70-iso/harvester-images.tar"
-if [ ! -f $output_file ]; then
+if [ ! -f $output_file.zst ]; then
   airgap_image_file='scripts/image-list.txt'
   images=$(cat "${airgap_image_file}")
   xargs -n1 docker pull <<< "${images}"
