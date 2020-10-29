@@ -14,6 +14,8 @@ longhornio/csi-attacher:v2.0.0
 longhornio/csi-node-driver-registrar:v1.2.0
 longhornio/csi-provisioner:v1.4.0
 longhornio/csi-resizer:v0.3.0
+docker.io/rnfvpe/multus:v3.4.1
+quay.io/coreos/flannel:v0.13.0
 docker.io/bitnami/kubectl:1.18.6
 docker.io/kubevirt/cdi-apiserver:v1.22.0
 docker.io/kubevirt/cdi-controller:v1.22.0

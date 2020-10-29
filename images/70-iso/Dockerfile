@@ -27,9 +27,8 @@ RUN mkdir -p /usr/src/iso/var/lib/rancher/k3s/agent/images && \
     mkdir -p /usr/src/iso/var/lib/rancher/k3s/server/static/charts && \
     mkdir -p /usr/src/iso/var/lib/rancher/k3s/server/manifests
 
-COPY harvester-0.1.0.tgz /usr/src/iso/var/lib/rancher/k3s/server/static/charts
-COPY longhorn-1.0.2.tgz /usr/src/iso/var/lib/rancher/k3s/server/static/charts
-COPY longhorn.yaml /usr/src/iso/var/lib/rancher/k3s/server/manifests
+COPY charts/* /usr/src/iso/var/lib/rancher/k3s/server/static/charts
+COPY manifests/* /usr/src/iso/var/lib/rancher/k3s/server/manifests
 COPY harvester-images.tar.zst /usr/src/iso/var/lib/rancher/k3s/agent/images
 
 
