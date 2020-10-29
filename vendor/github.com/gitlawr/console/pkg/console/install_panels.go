@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+	"sync"
 
 	cfg "github.com/gitlawr/console/pkg/config"
 	"github.com/gitlawr/console/pkg/widgets"
@@ -15,30 +16,37 @@ var (
 	installMode          string
 	nodeRole             string
 	harvesterChartValues = make(map[string]string)
+	once                 sync.Once
 )
 
 func (c *Console) layoutInstall(g *gocui.Gui) error {
-	setPanels(c)
-	initElements := []string{
-		titlePanel,
-		notePanel,
-		askCreatePanel,
-	}
-	for _, name := range initElements {
-		e, err := c.GetElement(name)
-		if err != nil {
-			return err
+	var err error
+	once.Do(func() {
+		setPanels(c)
+		initElements := []string{
+			titlePanel,
+			validatorPanel,
+			notePanel,
+			askCreatePanel,
 		}
-		if err := e.Show(); err != nil {
-			return err
+		var e widgets.Element
+		for _, name := range initElements {
+			e, err = c.GetElement(name)
+			if err != nil {
+				return
+			}
+			if err = e.Show(); err != nil {
+				return
+			}
 		}
-	}
-	return nil
+	})
+	return err
 }
 
 func setPanels(c *Console) error {
 	funcs := []func(*Console) error{
 		addTitleP,
+		addValidatorPanel,
 		addNotePanel,
 		addDiskPanel,
 		addAskCreatePanel,
@@ -46,6 +54,7 @@ func setPanels(c *Console) error {
 		addServerURLPanel,
 		addOsPasswordPanels,
 		addTokenPanel,
+		addProxyPanel,
 		addCloudInitPanel,
 		addConfirmPanel,
 		addInstallPanel,
@@ -67,11 +76,20 @@ func addTitleP(c *Console) error {
 	return nil
 }
 
+func addValidatorPanel(c *Console) error {
+	maxX, maxY := c.Gui.Size()
+	validatorV := widgets.NewPanel(c.Gui, validatorPanel)
+	validatorV.SetLocation(maxX/4, maxY/4*3, maxX/4*3, maxY/4*3+2)
+	validatorV.FgColor = gocui.ColorRed
+	c.AddElement(validatorPanel, validatorV)
+	return nil
+}
+
 func addNotePanel(c *Console) error {
 	maxX, maxY := c.Gui.Size()
 	noteV := widgets.NewPanel(c.Gui, notePanel)
-	noteV.SetLocation(maxX/4, maxY/4*3, maxX/4*3, maxY/4*3+2)
-	noteV.FgColor = gocui.ColorRed
+	noteV.SetLocation(maxX/4, maxY/4+3, maxX, maxY/4+10)
+	noteV.Wrap = true
 	c.AddElement(notePanel, noteV)
 	return nil
 }
@@ -92,7 +110,7 @@ func addDiskPanel(c *Console) error {
 			}
 			diskV.Close()
 			g.Cursor = true
-			return showNext(c, "Specify the password to access the operating system(user rancher)", osPasswordConfirmPanel, osPasswordPanel)
+			return showNext(c, "Configure the password to access the node(user rancher)", osPasswordConfirmPanel, osPasswordPanel)
 		},
 	}
 	c.AddElement(diskPanel, diskV)
@@ -210,7 +228,7 @@ func addServerURLPanel(c *Console) error {
 			}
 			serverURLV.Close()
 			cfg.Config.K3OS.ServerURL = serverURL
-			return showNext(c, "Specify cluster token", tokenPanel)
+			return showNext(c, "Configure cluster token", tokenPanel)
 		},
 	}
 	c.AddElement(serverURLPanel, serverURLV)
@@ -247,7 +265,7 @@ func addOsPasswordPanels(c *Console) error {
 			if err != nil {
 				return err
 			}
-			noteV, err := c.GetElement(notePanel)
+			validatorV, err := c.GetElement(validatorPanel)
 			if err != nil {
 				return err
 			}
@@ -260,10 +278,10 @@ func addOsPasswordPanels(c *Console) error {
 				return err
 			}
 			if password1 != password2 {
-				noteV.SetContent("password mismatching")
+				validatorV.SetContent("password mismatching")
 				return nil
 			}
-			noteV.Close()
+			validatorV.Close()
 			password1V.Close()
 			osPasswordConfirmV.Close()
 			encrpyted, err := getEncrptedPasswd(password1)
@@ -272,11 +290,9 @@ func addOsPasswordPanels(c *Console) error {
 			}
 			cfg.Config.K3OS.Password = encrpyted
 			if installMode == modeCreate {
-				return showNext(c, "Specify cluster token", tokenPanel)
-				// return showNext(c, "Specify Harvester admin password", adminPasswordConfirmPanel, adminPasswordPanel)
-			} else {
-				return showNext(c, "Specify exisiting server URL", serverURLPanel)
+				return showNext(c, "Configure cluster token", tokenPanel)
 			}
+			return showNext(c, "Configure exisiting server URL", serverURLPanel)
 		},
 	}
 	osPasswordConfirmV.SetLocation(maxX/4, maxY/4+3, maxX/4*3, maxY/4+5)
@@ -298,10 +314,44 @@ func addTokenPanel(c *Console) error {
 			}
 			cfg.Config.K3OS.Token = token
 			tokenV.Close()
-			return showNext(c, "Specify cloud-init(Optional)", cloudInitPanel)
+			setNote(c, proxyNote)
+			g.SetViewOnTop(notePanel)
+			return showNext(c, "Configure proxy(Optional)", proxyPanel, notePanel)
 		},
 	}
 	c.AddElement(tokenPanel, tokenV)
+	return nil
+}
+
+func addProxyPanel(c *Console) error {
+	maxX, maxY := c.Gui.Size()
+	proxyV, err := widgets.NewInput(c.Gui, proxyPanel, "Proxy address", false)
+	if err != nil {
+		return err
+	}
+	proxyV.KeyBindings = map[gocui.Key]func(*gocui.Gui, *gocui.View) error{
+		gocui.KeyEnter: func(g *gocui.Gui, v *gocui.View) error {
+			proxy, err := proxyV.GetData()
+			if err != nil {
+				return err
+			}
+			noteV, err := c.GetElement(notePanel)
+			if err != nil {
+				return err
+			}
+			if cfg.Config.K3OS.Environment == nil {
+				cfg.Config.K3OS.Environment = make(map[string]string)
+			}
+			cfg.Config.K3OS.Environment["http_proxy"] = proxy
+			cfg.Config.K3OS.Environment["https_proxy"] = proxy
+			proxyV.Close()
+			noteV.Close()
+			return showNext(c, "Configure cloud-init(Optional)", cloudInitPanel)
+		},
+	}
+
+	proxyV.SetLocation(maxX/4, maxY/4, maxX/4*3, maxY/4+3)
+	c.AddElement(proxyPanel, proxyV)
 	return nil
 }
 
@@ -335,7 +385,7 @@ func addAdminPasswordPanels(c *Console) error {
 			if err != nil {
 				return err
 			}
-			noteV, err := c.GetElement(notePanel)
+			validatorV, err := c.GetElement(validatorPanel)
 			if err != nil {
 				return err
 			}
@@ -348,13 +398,13 @@ func addAdminPasswordPanels(c *Console) error {
 				return err
 			}
 			if password1 != password2 {
-				noteV.SetContent("password mismatching")
+				validatorV.SetContent("password mismatching")
 				return nil
 			}
-			noteV.Close()
+			validatorV.Close()
 			password1V.Close()
 			adminPasswordConfirmV.Close()
-			return showNext(c, "Specify cluster token", tokenPanel)
+			return showNext(c, "Configure cluster token", tokenPanel)
 		},
 	}
 	adminPasswordConfirmV.SetLocation(maxX/4, maxY/4+3, maxX/4*3, maxY/4+5)
@@ -387,6 +437,9 @@ func addCloudInitPanel(c *Console) error {
 			options := fmt.Sprintf("install mode: %v\n", installMode)
 			if installMode == modeJoin {
 				options += fmt.Sprintf("node role: %v\n", nodeRole)
+			}
+			if proxy, ok := cfg.Config.K3OS.Environment["http_proxy"]; ok {
+				options += fmt.Sprintf("proxy address: %v\n", proxy)
 			}
 			options += string(installBytes)
 			widgets.Debug(g, "cfm cfg: ", fmt.Sprintf("%+v", cfg.Config.K3OS.Install))

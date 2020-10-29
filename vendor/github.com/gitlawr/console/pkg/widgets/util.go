@@ -19,13 +19,12 @@ func Debug(g *gocui.Gui, a ...interface{}) error {
 	if err != nil {
 		return err
 	}
-
 	defer f.Close()
+	log := fmt.Sprintln(a...)
+	if _, err = f.WriteString(log); err != nil {
+		return err
+	}
 
-	// log := fmt.Sprintln(a...)
-	// if _, err = f.WriteString(log); err != nil {
-	// 	return err
-	// }
 	// v, err := g.SetView("debug", 0, 0, 40, 40)
 	// v.Wrap = true
 	// if err != nil && err != gocui.ErrUnknownView {

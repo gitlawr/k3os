@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/gitlawr/console/pkg/widgets"
@@ -21,7 +20,6 @@ const (
 	colorYellow     int = 3
 )
 
-var once = sync.Once{}
 var installed = false
 
 func layoutDashboard(g *gocui.Gui) error {
@@ -120,7 +118,7 @@ func nodeIsReady() bool {
 }
 
 func chartIsInstalled() bool {
-	output, err := exec.Command("/bin/sh", "-c", `kubectl get po -n kube-system -l "job-name=helm-install-harvester"-o jsonpath='{.items[*].status.phase}'`).CombinedOutput()
+	output, err := exec.Command("/bin/sh", "-c", `kubectl get po -n kube-system -l "job-name=helm-install-harvester" -o jsonpath='{.items[*].status.phase}'`).CombinedOutput()
 	if err != nil {
 		return false
 	}

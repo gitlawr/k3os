@@ -69,11 +69,23 @@ func showNext(c *Console, title string, names ...string) error {
 	return nil
 }
 
+func setNote(c *Console, note string) error {
+	noteV, err := c.GetElement(notePanel)
+	if err != nil {
+		return err
+	}
+	noteV.SetContent(note)
+	return noteV.Show()
+}
+
 func customizeConfig() {
 	//common configs for both server and agent
 	cfg.Config.K3OS.DNSNameservers = []string{"8.8.8.8"}
 	cfg.Config.K3OS.NTPServers = []string{"ntp.ubuntu.com"}
-	cfg.Config.Bootcmd = []string{"for i in bridge flannel host-local loopback portmap;do ln -fs /var/lib/rancher/k3s/data/*/bin/cni /opt/cni/bin/$i;done"}
+	cfg.Config.Bootcmd = []string{
+		"mkdir -p /opt/cni/bin",
+		"for i in bridge flannel host-local loopback portmap;do ln -fs /var/lib/rancher/k3s/data/*/bin/cni /opt/cni/bin/$i;done",
+	}
 
 	if installMode == modeJoin && nodeRole == nodeRoleCompute {
 		return
