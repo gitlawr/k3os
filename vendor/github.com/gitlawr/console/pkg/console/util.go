@@ -70,6 +70,11 @@ func showNext(c *Console, title string, names ...string) error {
 }
 
 func customizeConfig() {
+	//common configs for both server and agent
+	cfg.Config.K3OS.DNSNameservers = []string{"8.8.8.8"}
+	cfg.Config.K3OS.NTPServers = []string{"ntp.ubuntu.com"}
+	cfg.Config.Bootcmd = []string{"for i in bridge flannel host-local loopback portmap;do ln -fs /var/lib/rancher/k3s/data/*/bin/cni /opt/cni/bin/$i;done"}
+
 	if installMode == modeJoin && nodeRole == nodeRoleCompute {
 		return
 	}
@@ -79,6 +84,7 @@ func customizeConfig() {
 	harvesterChartValues["containers.apiserver.image.tag"] = "master-head"
 	harvesterChartValues["service.harvester.type"] = "LoadBalancer"
 	harvesterChartValues["containers.apiserver.authMode"] = "localUser"
+	harvesterChartValues["minio.mode"] = "distributed"
 
 	cfg.Config.WriteFiles = []config.File{
 		{
@@ -92,6 +98,8 @@ func customizeConfig() {
 		"server",
 		"--disable",
 		"local-storage",
+		"--flannel-backend",
+		"none",
 	}
 }
 
