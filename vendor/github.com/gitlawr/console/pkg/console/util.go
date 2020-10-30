@@ -82,6 +82,7 @@ func customizeConfig() {
 	//common configs for both server and agent
 	cfg.Config.K3OS.DNSNameservers = []string{"8.8.8.8"}
 	cfg.Config.K3OS.NTPServers = []string{"ntp.ubuntu.com"}
+	cfg.Config.K3OS.Modules = []string{"kvm"}
 	cfg.Config.Bootcmd = []string{
 		"mkdir -p /opt/cni/bin",
 		"cp /var/lib/cni/bin/* /opt/cni/bin",
